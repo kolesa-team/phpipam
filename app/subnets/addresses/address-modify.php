@@ -75,7 +75,7 @@ else {
 	$address['mac_old'] = @$address['mac'];
 }
 
-$currentGroups  = $Tools->fetch_multiple_objects("ipGroupsMapping", 'ip_id', $id);
+$currentGroups  = $Tools->fetch_multiple_objects("ipGroupsMapping", 'ip_id', $id) ?: [];
 $selectedGroups = [];
 
 foreach ($currentGroups as $group) {

@@ -440,48 +440,53 @@ abstract class DB {
      * Update multiple objects at once.
      *
      * @access public
-     * @param array  $values
-     * @param array  $id
+     * @param  array      $values
+     * @param  array      $id
+     * @throws \Exception
      * @return void
      */
     public function updateMultipleGroups($values, $id = null) {
-        //set values
-        $objParams        = array_keys($values);
-        $preparedParamArr = array();
-        $currentMapping   = $this->findObjects('ipGroupsMapping', 'ip_id', $id);
-
-        foreach ($objParams as $objParam) {
-            $preparedParamArr[] = '`' . $this->escape($objParam) . '`=?';
+        if ($values === null) {
+            $values = [];
         }
 
-        if (!empty($values)) {
-            $newMapping = [];
+        //set values
+        $currentMapping = $this->findObjects('ipGroupsMapping', 'ip_id', $id);
 
-            foreach ($values as $value) {
-                $newMapping[] = [
-                    'id'       => null,
-                    'ip_id'    => $id,
-                    'group_id' => $value
-                ];
-            }
-            
-            foreach ($currentMapping as &$item) {
+        if (is_array($currentMapping)) {
+          foreach ($currentMapping as &$item) {
                 $item = (array) $item;
             }
+        }
 
-            if (array_column($newMapping, 'group_id') !== array_column($currentMapping, 'group_id')) {
-                if (!empty($currentMapping)) {
-                    $this->deleteObjects('ipGroupsMapping', array_column($currentMapping, 'id'));
-                }
-
-                foreach ($newMapping as $item) {
-                    $this->insertObject('ipGroupsMapping', $item);
-                }
-            }
-        } else {
+        if (empty($values)) {
             if ($currentMapping) {
                 $this->deleteObjects('ipGroupsMapping', array_column($currentMapping, 'id'));
             }
+
+            return;
+        }
+
+        $newMapping = [];
+
+        foreach ($values as $value) {
+            $newMapping[] = [
+                'id'       => null,
+                'ip_id'    => $id,
+                'group_id' => $value
+            ];
+        }
+
+        if (array_column($newMapping, 'group_id') === array_column($currentMapping, 'group_id')) {
+            return;
+        }
+
+        if ($currentMapping) {
+            $this->deleteObjects('ipGroupsMapping', array_column($currentMapping, 'id'));
+        }
+
+        foreach ($newMapping as $item) {
+            $this->insertObject('ipGroupsMapping', $item);
         }
     }
 

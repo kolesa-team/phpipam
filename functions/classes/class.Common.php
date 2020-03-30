@@ -782,6 +782,10 @@ class Common_functions  {
 			if( substr($key,0,2)=='__' || substr($key,0,9)=='PHPSESSID' || substr($key,0,4)=='pass' || $key=='plainpass' )
 				continue;
 
+            if (is_array($req)) {
+                $req = json_encode($req);
+            }
+
 			// NOTE The colon character ":" is reserved as it used in array_to_log for implode/explode.
 			// Replace colon (U+003A) with alternative characters.
 			// Using JSON encode/decode would be more appropiate but we need to maintain backwards compatibility with historical changelog/logs data in the database.
@@ -793,6 +797,7 @@ class Common_functions  {
 
 			$result .= ($changelog===true) ? "[$key]: $req<br>" : " ". $key . ": " . $req . "<br>";
 		}
+
 		return $result;
 	}
 

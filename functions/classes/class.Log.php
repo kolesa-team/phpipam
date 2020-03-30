@@ -267,8 +267,12 @@ class Logging extends Common_functions {
 	 */
 	protected $Tools;
 
-
-
+    /**
+     * IpGroups object
+     *
+     * @var \ipGroups
+     */
+	protected $IpGroups;
 
 	/**
 	 * __construct function.
@@ -728,6 +732,7 @@ class Logging extends Common_functions {
 		    if (!is_object($this->Subnets))   $this->Subnets   = new Subnets ($this->Database);
 		    if (!is_object($this->Sections))  $this->Sections  = new Sections ($this->Database);
 		    if (!is_object($this->Tools))     $this->Tools     = new Tools ($this->Database);
+		    if (!is_object($this->IpGroups))  $this->IpGroups  = new ipGroups($this->Database);
 
 		    # unset unneeded values and format
 		    $this->changelog_unset_unneeded_values ();
@@ -966,7 +971,10 @@ class Logging extends Common_functions {
 			if($this->object_old[$k]!=$v && ($this->object_old[$k] != str_replace("\'", "'", $v)))	{
 				//empty
 				if(strlen(@$this->object_old[$k])==0)	{ $this->object_old[$k] = "NULL"; }
-				if(strlen(@$v)==0)						{ $v = "NULL"; }
+
+				if (!is_array($v) && strlen(@$v) == 0) {
+				    $v = "NULL";
+				}
 
 				//tag change
 				if($k == 'state') 				{ $v = $this->changelog_format_tag_diff ($k, $v); }
@@ -996,6 +1004,7 @@ class Logging extends Common_functions {
 				elseif($k == "permissions") 	{ $v = $this->changelog_format_permission_diff ($k, $v); }
 				// nameserver index
 				elseif($k == "nameserverId") 	{ $v = $this->changelog_format_ns_diff ($k, $v); }
+				elseif($k == "groups")          { $v = $this->changelog_format_ip_groups($k, $v); }
 				// make booleans
 				$v = $this->changelog_make_booleans ($k, $v);
 				//set log
@@ -1003,6 +1012,7 @@ class Logging extends Common_functions {
 				$log["$k"] = $this->object_old[$k]." => $v";
 			}
 		}
+
 		// result
 		return $log;
 	}
@@ -1144,6 +1154,29 @@ class Logging extends Common_functions {
 		//result
 		return $v;
 	}
+
+    /**
+     * Formats ip groups from array to string
+     *
+     * @param  string $k
+     * @param  array  $groups
+     * @return string
+     */
+	private function changelog_format_ip_groups($key, $groups) {
+	    $names = [];
+
+	    foreach ($groups as $groupId) {
+            $group = $this->IpGroups->fetch_group('id', $groupId);
+
+            if (!$group) {
+                continue;
+            }
+
+            $names[] = $group->name;
+        }
+
+        return implode(', ', $names);
+    }
 
 	/**
 	 * Formats section if change
@@ -1427,16 +1460,17 @@ class Logging extends Common_functions {
 		if (array_key_exists($this->object_type, $keys)) {
 			if (in_array($k, $keys[$this->object_type])) {
 				if ($v=="0") { $this->object_old[$k] = "True";	return "False"; }
-				else 		 { $this->object_old[$k] = "False"; return "True"; }
-			}
-			else {
-				return $v;
-			}
-		}
-		else {
-			return $v;
-		}
-	}
+
+                $this->object_old[$k] = "False";
+
+                return "True";
+            }
+
+            return $v;
+        }
+
+        return $v;
+    }
 
 	/**
 	 * Format permission on permission only change
