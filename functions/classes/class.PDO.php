@@ -464,6 +464,10 @@ abstract class DB {
                     'group_id' => $value
                 ];
             }
+            
+            foreach ($currentMapping as &$item) {
+                $item = (array) $item;
+            }
 
             if (array_column($newMapping, 'group_id') !== array_column($currentMapping, 'group_id')) {
                 if (!empty($currentMapping)) {

@@ -1,11 +1,9 @@
 <?php
-
 /**
  * Script to print edit / delete / new IP address
  *
  * Fetches info from database
  *************************************************/
-
 
 # include required scripts
 require_once( dirname(__FILE__) . '/../../../functions/functions.php' );
@@ -82,8 +80,8 @@ $selectedGroups = [];
 
 foreach ($currentGroups as $group) {
     $selectedGroups[$group->group_id] = $group->group_id;
-}
 
+}
 # Set action and button text
 if ($action == "add") 			{ $btnName = _("add");		$act = "add"; }
 else if ($action == "all-add")	{ $btnName = _("add");  	$act = "add"; }
@@ -115,7 +113,6 @@ if ($act=="add" && $User->settings->enableMulticast==1) {
 # all locations
 if($User->settings->enableLocations=="1")
 $locations = $Tools->fetch_all_objects ("locations", "name");
-
 ?>
 
 <script type="text/javascript">
