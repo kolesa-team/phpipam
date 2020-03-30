@@ -782,7 +782,7 @@ class Common_functions  {
 			if( substr($key,0,2)=='__' || substr($key,0,9)=='PHPSESSID' || substr($key,0,4)=='pass' || $key=='plainpass' )
 				continue;
 
-			if (is_array($req)) {
+            if (is_array($req)) {
                 $req = json_encode($req);
             }
 
