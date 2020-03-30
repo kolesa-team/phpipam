@@ -974,7 +974,7 @@ class Logging extends Common_functions {
 
 				if (!is_array($v) && strlen(@$v) == 0) {
 				    $v = "NULL";
-                }
+				}
 
 				//tag change
 				if($k == 'state') 				{ $v = $this->changelog_format_tag_diff ($k, $v); }

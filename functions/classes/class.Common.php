@@ -783,7 +783,7 @@ class Common_functions  {
 				continue;
 
 			if (is_array($req)) {
-			    $req = json_encode($req);
+                $req = json_encode($req);
             }
 
 			// NOTE The colon character ":" is reserved as it used in array_to_log for implode/explode.
