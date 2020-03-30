@@ -554,7 +554,6 @@ class Addresses extends Common_functions {
 		# execute
 		try {
 		    $this->Database->updateObject("ipaddresses", $insert, $id1, $id2);
-
 		    $this->Database->updateMultipleGroups($address['groups'], $insert['id']);
 		} catch (Exception $e) {
 			$this->Log->write(
