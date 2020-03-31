@@ -222,10 +222,11 @@ class Addresses extends Common_functions {
 				$this->Result->show("danger", _("Error: ").$e->getMessage());
 				return false;
 			}
+
 			# save to addresses cache
-			if($address !== null) {
-				# add decimal format
-				$address->ip = $this->transform_to_dotted ($address->ip_addr);
+            if($address !== null) {
+                # add decimal format
+                $address->ip = $this->transform_to_dotted ($address->ip_addr);
                 $groups      = json_decode(json_encode($this->fetch_multiple_objects("ipGroupsMapping", 'ip_id', $id), true));
 
                 if (is_array($groups)) {
@@ -242,7 +243,7 @@ class Addresses extends Common_functions {
 			}
 
 			#result
-			return !is_null($address) ? $address : false;
+			return $address !== null ? $address : false;
 		}
 	}
 
