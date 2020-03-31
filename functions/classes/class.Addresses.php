@@ -223,7 +223,7 @@ class Addresses extends Common_functions {
 				return false;
 			}
 			# save to addresses cache
-			if(!is_null($address)) {
+			if($address !== null) {
 				# add decimal format
 				$address->ip = $this->transform_to_dotted ($address->ip_addr);
                 $groups      = json_decode(json_encode($this->fetch_multiple_objects("ipGroupsMapping", 'ip_id', $id), true));
@@ -232,11 +232,15 @@ class Addresses extends Common_functions {
                     $ids           = array_column($groups, 'group_id');
                     $currentGroups = $this->fetch_multiple_objects_by_ids('ipGroups', $ids);
 
-                    $address->groups = implode(', ', array_column($currentGroups, 'name'));
+                    if ($currentGroups) {
+                        $address->groups = implode(', ', array_column($currentGroups, 'name'));
+                    }
+
                     # save to subnets
                     $this->addresses[$id] = (object) $address;
                 }
 			}
+
 			#result
 			return !is_null($address) ? $address : false;
 		}
