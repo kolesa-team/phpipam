@@ -287,33 +287,32 @@ class Common_functions  {
      *
      *	doesnt cache
      *
-     * @access public
-     * @param mixed $table
-     * @param mixed $field
-     * @param mixed $value
-     * @param string $sortField (default: 'id')
-     * @param bool $sortAsc (default: true)
-     * @param bool $like (default: false)
-     * @param array|mixed $result_fields (default: *)
+     * @param  string|null $table
+     * @param  array       $values
      * @return bool|array
      */
     public function fetch_multiple_objects_by_ids ($table, $values) {
         # null table
-        if(is_null($table)||strlen($table)==0) return false;
-        else {
-            try {
-                $placeholders = str_repeat ('?, ',  count($values) - 1) . '?';
-                $query = "SELECT * FROM $table WHERE id IN ($placeholders)";
-                $res = $this->Database->getList($query, $values);
-            }
-            catch (Exception $e) {
-                $this->Result->show("danger", _("Error: ").$e->getMessage());
-                return false;
-            }
-
-            # result
-            return (is_array($res) && sizeof($res)>0) ? $res : false;
+        if($table === null || $table === '') {
+            return false;
         }
+
+        if (!is_array($values) || count($values) === 0) {
+            return false;
+        }
+
+        try {
+            $placeholders = str_repeat ('?, ',  count($values) - 1) . '?';
+            $query        = "SELECT * FROM $table WHERE id IN ($placeholders)";
+            $res          = $this->Database->getList($query, $values);
+        } catch (Exception $e) {
+            $this->Result->show("danger", _("Error: ").$e->getMessage());
+
+            return false;
+        }
+
+        # result
+        return (is_array($res) && count($res) > 0) ? $res : false;
     }
 
 	/**

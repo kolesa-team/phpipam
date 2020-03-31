@@ -222,23 +222,28 @@ class Addresses extends Common_functions {
 				$this->Result->show("danger", _("Error: ").$e->getMessage());
 				return false;
 			}
+
 			# save to addresses cache
-			if(!is_null($address)) {
-				# add decimal format
-				$address->ip = $this->transform_to_dotted ($address->ip_addr);
+            if($address !== null) {
+                # add decimal format
+                $address->ip = $this->transform_to_dotted ($address->ip_addr);
                 $groups      = json_decode(json_encode($this->fetch_multiple_objects("ipGroupsMapping", 'ip_id', $id), true));
 
                 if (is_array($groups)) {
                     $ids           = array_column($groups, 'group_id');
                     $currentGroups = $this->fetch_multiple_objects_by_ids('ipGroups', $ids);
 
-                    $address->groups = implode(', ', array_column($currentGroups, 'name'));
+                    if ($currentGroups) {
+                        $address->groups = implode(', ', array_column($currentGroups, 'name'));
+                    }
+
                     # save to subnets
                     $this->addresses[$id] = (object) $address;
                 }
 			}
+
 			#result
-			return !is_null($address) ? $address : false;
+			return $address !== null ? $address : false;
 		}
 	}
 
