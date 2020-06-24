@@ -371,7 +371,7 @@ else {
 		else {
 			//fail
 		    if (!$Addresses->modify_address($address)) {
-		        $Result->show("danger", _('Error inserting IP address')."!", false);
+		        $Result->show("danger", _(sprintf('Error occurred when try to %s IP address', $action))."!", false);
 		    }
 		    //success, save log file and send email
 		    else {

@@ -80,7 +80,6 @@ $selectedGroups = [];
 
 foreach ($currentGroups as $group) {
     $selectedGroups[$group->group_id] = $group->group_id;
-
 }
 # Set action and button text
 if ($action == "add") 			{ $btnName = _("add");		$act = "add"; }

@@ -610,10 +610,19 @@ class Addresses extends Common_functions {
 		try {
 		    $this->Database->deleteRow("ipaddresses", $field, $value, $field2, $value2);
 
-            $currentMapping = $this->Database->findObjects('ipGroupsMapping', 'ip_id', $address['id']);
+            $groupsMappingIds = [];
+            $currentMapping   = $this->Database->findObjects('ipGroupsMapping', 'ip_id', $address['id']);
 
-            if ($currentMapping) {
-                $this->Database->deleteObjects('ipGroupsMapping', array_column($currentMapping, 'id'));
+            if (count($currentMapping) > 0) {
+                foreach ($currentMapping as $item) {
+                    if (is_object($item) && property_exists($item, "id") && (int)$item->id > 0) {
+                        $groupsMappingIds[] = (int)$item->id;
+                    }
+                }
+
+                if (count($groupsMappingIds) > 0) {
+                    $this->Database->deleteObjects('ipGroupsMapping', $groupsMappingIds);
+                }
             }
 		}
 		catch (Exception $e) {
